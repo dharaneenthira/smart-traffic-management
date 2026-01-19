@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Adaptive Traffic Signal Control AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .lane {
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .green {
+            color: green;
+            font-weight: bold;
+        }
+        .red {
+            color: red;
+            font-weight: bold;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🚦 Adaptive Traffic Signal Control (AI Agent)</h1>
+
+<div class="container">
+    <h3>Enter Vehicle Density</h3>
+
+    <div class="lane">Lane 1: <input type="number" id="l1"></div>
+    <div class="lane">Lane 2: <input type="number" id="l2"></div>
+    <div class="lane">Lane 3: <input type="number" id="l3"></div>
+    <div class="lane">Lane 4: <input type="number" id="l4"></div>
+
+    <h3>Emergency Vehicle</h3>
+    <label>
+        <input type="radio" name="ambulance" value="no" checked>No
+    </label>
+    <label>
+        <input type="radio" name="ambulance" value="yes">Yes
+    </label>
+
+    <br><br>
+    Ambulance Lane (1-4):
+    <input type="number" id="ambLane" min="1" max="4">
+
+    <br><br>
+    <button onclick="runAI()">Run AI Agent</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+function runAI() {
+    let lanes = [
+        Number(document.getElementById("l1").value),
+        Number(document.getElementById("l2").value),
+        Number(document.getElementById("l3").value),
+        Number(document.getElementById("l4").value)
+    ];
+
+    let ambulance = document.querySelector('input[name="ambulance"]:checked').value;
+    let greenLane = 0;
+    let reason = "";
+
+    if (ambulance === "yes") {
+        greenLane = Number(document.getElementById("ambLane").value) - 1;
+        reason = "Emergency vehicle detected (Highest Priority)";
+    } else {
+        let max = lanes[0];
+        for (let i = 1; i < lanes.length; i++) {
+            if (lanes[i] > max) {
+                max = lanes[i];
+                greenLane = i;
+            }
+        }
+        reason = "Maximum vehicle density";
+    }
+
+    let output = "<h3>Traffic Signal Status</h3>";
+    for (let i = 0; i < 4; i++) {
+        if (i === greenLane) {
+            output += `<p class="green">Lane ${i+1} → GREEN</p>`;
+        } else {
+            output += `<p class="red">Lane ${i+1} → RED</p>`;
+        }
+    }
+
+    output += `<p><b>AI Decision Reason:</b> ${reason}</p>`;
+    document.getElementById("result").innerHTML = output;
+}
+</script>
+
+</body>
+</html>
+
